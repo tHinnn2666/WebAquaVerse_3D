@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HUD Guide</title>
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+    .bubbles, .crosshair, #aquarium, .hook-btn, .fish {
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Đảm bảo màn hình kết thúc mượt mà khi hiện ra */
+    .end-screen {
+      will-change: opacity, visibility;
+      transition: opacity 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+<div class="pre">
+  <div class="panel">
+    <h1 class="title"> GIỚI THIỆU </h1>
+    <div class="steps">
+      
+      <div class="step">
+        <div class="icon">📌</div>
+        <div class="text">
+          <h3>1. BẢNG TARGET FISH</h3>
+          <p>Thông tin về cá mục tiêu.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="6"></circle>
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+          </svg>
+        </div>
+        <div class="text">
+          <h3>2. NHẮM MỤC TIÊU</h3>
+          <p>Di chuyển tầm ngắm đến cá mục tiêu.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon">🎣</div>
+        <div class="text">
+          <h3>3. CAST</h3>
+          <p>Nhấn SPACE để thả câu.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon">🐟</div>
+        <div class="text">
+          <h3>4. BẮT CÁ</h3>
+          <p>Bắt đúng cá để chuyển sang mục tiêu tiếp theo.</p>
+        </div>
+      </div>
+
+    </div>
+    <button class="start-btn">BẮT ĐẦU</button>
+  </div>
+</div>
+
+<div class="game">
+  <div class="bubbles"></div>
+  
+  <div class="topbar">
+    <div class="back">X</div>
+    <div class="top-center">
+      <div class="box">
+        <div class="icon">⏰</div>
+        <div>
+          <h3>THỜI GIAN</h3>
+          <p>01:00</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="target-panel">
+    <div class="target-hit">✔ WELL DONE!</div>
+    <div class="target-header">
+      <h2>🎯 TARGET FISH</h2>
+    </div>
+    <div class="fish-name"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    
+    <div class="progress-title">
+      <span>PROGRESS</span>
+      <span>2 / 8</span>
+    </div>
+    <div class="progress">
+      <span></span>
+    </div>
+  </div>
+
+  <div class="crosshair">
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
+
+  <div id="aquarium"></div>
+    
+  <div class="hook-btn">🪝</div>
+  <div class="space">
+    NHẤN <span>SPACE</span> ĐỂ THẢ CÂU
+  </div>
+</div>
+
+<div class="end-screen hide">
+  <div class="end-card">
+    <img class="end-banner" src="" alt="result">
+    <div class="result-boxes">
+      <div class="result-box">
+        <h3>🐟 Cá đã bắt</h3>
+        <p class="final-score">0</p>
+      </div>
+      <div class="result-box">
+        <h3>⏰ Thời gian còn lại</h3>
+        <p class="final-time">0s</p>
+      </div>
+    </div>
+
+    <div class="end-buttons">
+      <button class="home-btn">
+        <img src="home.png" alt="Home">
+      </button>
+      <button class="restart-btn">
+        <img src="restart.png" alt="Restart">
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const endScreen = document.querySelector('.end-screen');
+    const homeBtn = document.querySelector('.home-btn');
+    const restartBtn = document.querySelector('.restart-btn');
+
+    // Tự động kiểm tra khi end-screen mất đi class "hide" (tức là game over)
+    if (endScreen) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class') {
+            if (!endScreen.classList.contains('hide')) {
+              // Gửi tín hiệu hoàn thành về trang chính
+              window.parent.postMessage('game_completed', '*');
+            }
+          }
+        });
+      });
+      observer.observe(endScreen, { attributes: true });
+    }
+
+    // Dự phòng: Gửi tín hiệu khi người dùng click vào nút Home hoặc Restart
+    const sendCompletion = () => { window.parent.postMessage('game_completed', '*'); };
+    if (homeBtn) homeBtn.addEventListener('click', sendCompletion);
+    if (restartBtn) restartBtn.addEventListener('click', sendCompletion);
+  });
+</script>
+
+<script src="script.js"></script>
+</body>
+</html>
