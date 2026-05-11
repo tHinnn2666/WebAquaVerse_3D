@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaVerse - Khám Phá Thế Giới Thủy Cung</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+/* =========================================
+   1. RESET & CƠ BẢN
+   ========================================= */
+body { 
+    margin: 0; 
+    overflow: hidden; 
+    background-color: #000; 
+    font-family: 'Exo 2', sans-serif; 
+}
+
+canvas { 
+    display: block; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    z-index: 0; 
+}
+
+/* =========================================
+   2. BONG BÓNG (BUBBLES)
+   ========================================= */
+.bubbles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bubbles span {
+    position: absolute;
+    bottom: -50px;
+    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #d4d4d8 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    animation: floatUp 5s infinite ease-in;
+}
+
+.bubbles span:nth-child(1) { width: 20px; height: 20px; left: 10%; animation-duration: 6s; }
+.bubbles span:nth-child(2) { width: 30px; height: 30px; left: 30%; animation-duration: 4s; animation-delay: 2s; }
+.bubbles span:nth-child(3) { width: 15px; height: 15px; left: 50%; animation-duration: 7s; animation-delay: 1s; }
+.bubbles span:nth-child(4) { width: 25px; height: 25px; left: 70%; animation-duration: 5s; animation-delay: 3s; }
+.bubbles span:nth-child(5) { width: 35px; height: 35px; left: 85%; animation-duration: 8s; animation-delay: 0.5s; }
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-100vh) scale(1.2); opacity: 1; }
+}
+
+/* =========================================
+   3. KHUNG QUIZ CONTAINER
+   ========================================= */
+.container {
+    position: fixed !important; 
+    top: 30px !important;       
+    right: 30px !important;     
+    left: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    transform: none !important;
+    z-index: 10000 !important;  
+    width: 350px; 
+    background: rgba(10, 30, 60, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================
+   4. GIAO DIỆN CHUNG & UI LAYER
+   ========================================= */
+.ui-layer {
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    pointer-events: none; 
+    z-index: 10;
+}
+
+.glass-ui {
+    background: rgba(10, 30, 60, 0.4);
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 16px; 
+    color: #fff;
+    pointer-events: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* === LOGO === */
+.brand-logo {
+    position: absolute; 
+    top: 35px; 
+    left: 40px;
+    display: flex; 
+    align-items: center; 
+    gap: 15px;
+    pointer-events: auto;
+}
+.brand-icon {
+    width: 55px; height: 55px;
+    background: radial-gradient(circle, #ffffff 0%, #bae6fd 100%);
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 26px; line-height: 1; text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(0, 243, 255, 0.3);
+}
+.brand-text { display: flex; flex-direction: column; }
+.brand-text h1 {
+    margin: 0; font-size: 30px; font-weight: 800; letter-spacing: 2px;
+    color: #fff; line-height: 1.1;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.8), 0 0 20px rgba(0, 243, 255, 0.4);
+}
+.brand-text p {
+    margin: 4px 0 0; font-size: 11px; color: #a5f3fc;
+    text-transform: uppercase; letter-spacing: 2px; font-weight: 600; opacity: 0.9;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+    position: absolute; top: 130px; left: 40px;
+    display: flex; flex-direction: column; gap: 16px;
+}
+.nav-btn {
+    display: flex; align-items: center; gap: 15px;
+    padding: 14px 25px; width: 150px;
+    text-decoration: none; color: #cbd5e1; font-weight: 600; font-size: 16px;
+    border-radius: 20px;
+    background: rgba(10, 25, 50, 0.5);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer; pointer-events: auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.nav-btn:hover {
+    background: rgba(0, 243, 255, 0.15);
+    border-color: rgba(0, 243, 255, 0.6);
+    color: #fff; transform: translateX(8px);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+}
+.nav-btn.active {
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.25) 0%, rgba(0, 243, 255, 0.05) 100%);
+    border-color: rgba(0, 243, 255, 0.8);
+    border-left: 4px solid #00f3ff; color: #fff;
+    text-shadow: 0 0 8px rgba(255,255,255,0.5);
+    box-shadow: inset 5px 0 15px rgba(0, 243, 255, 0.2), 0 0 15px rgba(0, 243, 255, 0.4);
+    transform: translateX(5px);
+}
+.nav-icon {
+    font-size: 20px; line-height: 1;
+    display: flex; align-items: center;
+    filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.6));
+}
+
+/* === BOTTOM BAR === */
+.bottom-bar {
+    position: absolute; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 10px 25px;
+    width: fit-content;
+    border-radius: 20px;
+}
+.task-main {
+    display: flex; align-items: center; gap: 12px;
+    padding-right: 20px; border-right: 1px solid rgba(255,255,255,0.1);
+}
+.task-main-icon { font-size: 20px; color: #bca5ff; text-shadow: 0 0 10px #bca5ff; }
+.task-main-text h3 { margin: 0; font-size: 14px; font-weight: 700; }
+.task-main-text p { margin: 3px 0 0; font-size: 11px; color: #94a3b8; }
+
+.stats-group { display: flex; gap: 25px; align-items: center; padding-left: 10px; }
+.stat-item { display: flex; align-items: center; gap: 10px; }
+.stat-icon {
+    width: 35px; height: 35px; border-radius: 50%;
+    background: rgba(0, 243, 255, 0.1);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    display: flex; justify-content: center; align-items: center;
+    font-size: 16px; color: #00f3ff; line-height: 1; text-align: center;
+}
+.stat-info p { margin: 0; font-size: 12px; color: #cbd5e1; font-weight: 500; }
+.stat-info span { display: block; margin-top: 2px; font-size: 13px; font-weight: 700; color: #00f3ff; }
+
+/* === AUDIO UI === */
+#audio-ui-container {
+    position: absolute; bottom: 30px; right: 30px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 15px; border-radius: 30px; z-index: 100;
+}
+#mute-btn {
+    background: transparent; border: none; color: #fff;
+    font-size: 20px; cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+    filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.6));
+}
+#mute-btn:hover { transform: scale(1.15); }
+#volume-slider {
+    cursor: pointer; width: 80px;
+    -webkit-appearance: none; height: 4px;
+    background: rgba(255,255,255,0.2); border-radius: 2px; outline: none;
+}
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    background: #00f3ff; border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
+    cursor: pointer; transition: transform 0.1s;
+}
+#volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* =========================================
+   5. BẢNG THÔNG TIN CÁ (FISH PANEL UI)
+   ========================================= */
+.glass-panel {
+    position: absolute;
+    top: 45%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 780px;
+    height: 460px;
+    display: flex;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #040d1a;
+    border: 1px solid rgba(0, 163, 255, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 163, 255, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 1000;
+}
+.glass-panel.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+}
+
+#close-btn {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(0, 163, 255, 0.5);
+    color: #fff; font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+    z-index: 10;
+}
+#close-btn:hover {
+    background: rgba(0, 163, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+/* PROFILE BÊN TRÁI */
+.panel-left {
+    width: 260px; flex-shrink: 0; display: flex; flex-direction: column;
+    padding: 20px; border-right: 1px solid rgba(0, 163, 255, 0.15); position: relative;
+}
+.panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.creature-icon-ring {
+    width: 48px; height: 48px; border-radius: 50%; border: 2px solid #00a3ff;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: inset 0 0 10px rgba(0, 163, 255, 0.3), 0 0 15px rgba(0, 163, 255, 0.2);
+    background: radial-gradient(circle, rgba(0,163,255,0.15) 0%, transparent 70%);
+}
+.creature-icon { font-size: 24px; filter: drop-shadow(0 0 8px rgba(0, 163, 255, 0.8)); }
+.title-wrapper { display: flex; flex-direction: column; }
+.title-wrapper h2 {
+    margin: 0; font-size: 10px; letter-spacing: 1px; color: #7dd3fc;
+    text-transform: uppercase; font-weight: 600;
+}
+.title-wrapper h1 {
+    margin: 2px 0 4px; font-size: 16px; font-weight: 800; color: #fff;
+    letter-spacing: 1px; text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0, 163, 255, 0.4);
+}
+.badge {
+    font-size: 9px; font-weight: 700; color: #00a3ff; padding: 2px 7px; border-radius: 10px;
+    background: rgba(0, 163, 255, 0.1); border: 1px solid #00a3ff; width: fit-content;
+}
+.panel-img-wrapper {
+    width: 100%; height: 170px; border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(0, 163, 255, 0.2); box-shadow: 0 5px 20px rgba(0,0,0,0.5); margin-bottom: 12px;
+}
+.panel-img { width: 100%; height: 100%; object-fit: cover; }
+
+/* YOUTUBE CARD */
+.panel-yt-card {
+    display: block; text-decoration: none; width: 100%; border-radius: 12px; overflow: hidden; position: relative;
+    border: 1px solid rgba(0, 163, 255, 0.3); height: 150px; transition: all 0.3s;
+}
+.panel-yt-card:hover { border-color: rgba(0, 163, 255, 0.8); box-shadow: 0 0 20px rgba(0, 163, 255, 0.3); }
+.panel-yt-thumb { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); }
+.yt-overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 10px 12px;
+}
+.yt-header .yt-logo {
+    color: #fff; font-size: 11px; font-weight: bold; background: rgba(0,0,0,0.6);
+    padding: 4px 8px; border-radius: 4px; display: inline-block;
+}
+.yt-center { display: flex; justify-content: center; align-items: center; flex: 1; }
+.yt-play-btn {
+    width: 40px; height: 40px; background: #ff0000; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px; padding-left: 3px; box-shadow: 0 0 15px rgba(255,0,0,0.5);
+}
+.yt-footer { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
+.yt-title {
+    color: #fff; font-size: 11px; font-weight: 600; 
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    text-shadow: 0 1px 3px #000;
+}
+.yt-time { color: #fff; font-size: 10px; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 4px; }
+
+/* INFO GRID BÊN PHẢI */
+.panel-right { flex: 1; display: flex; flex-direction: column; padding: 20px; }
+.panel-right-header { display: flex; flex-direction: column; margin-bottom: 14px; }
+.panel-section-title {
+    font-size: 14px; font-weight: 700; color: #00a3ff; letter-spacing: 1px; margin-bottom: 8px;
+}
+.title-line-dot { display: flex; align-items: center; width: 100%; }
+.title-line-dot .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #00a3ff; box-shadow: 0 0 8px #00a3ff;
+}
+.title-line-dot .line {
+    height: 1px; flex: 1; background: linear-gradient(90deg, rgba(0,163,255,0.5) 0%, transparent 100%);
+}
+.panel-info-list {
+    display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: minmax(85px, auto); gap: 10px; height: 100%;
+}
+.info-item {
+    display: flex; align-items: flex-start; background: #081628; border: 1px solid rgba(0, 163, 255, 0.15);
+    border-radius: 10px; padding: 10px 12px; gap: 10px; transition: all 0.3s ease;
+    opacity: 0; transform: translateY(10px);
+}
+.glass-panel.show .info-item {
+    opacity: 1; transform: translateY(0); transition: opacity 0.4s ease var(--delay), transform 0.4s ease var(--delay);
+}
+.info-item:hover { background: #0b1f38; border-color: rgba(0, 163, 255, 0.4); }
+.icon-wrapper {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; border: 1px solid rgba(0, 163, 255, 0.4);
+    background: rgba(0, 163, 255, 0.05); box-shadow: 0 0 10px rgba(0, 163, 255, 0.1);
+}
+.info-content { display: flex; flex-direction: column; flex: 1; }
+.info-label { font-size: 12px; font-weight: 700; color: #00a3ff; margin-bottom: 3px; }
+.info-content p { margin: 0; font-size: 11px; line-height: 1.4; color: #cbd5e1; }
+
+/* =========================================
+   6. BẢNG MÔI TRƯỜNG (ENVIRONMENT PANEL)
+   ========================================= */
+.env-panel {
+    position: absolute; top: 30px; right: 40px;
+    width: fit-content; min-width: 220px; max-width: 280px;
+    height: fit-content; max-height: calc(100vh - 150px);
+    overflow-y: auto; padding: 20px; border-radius: 20px;
+    background: linear-gradient(160deg, rgba(5,20,40,0.85) 0%, rgba(2,10,25,0.92) 100%);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0,243,255,0.25);
+    box-shadow: 0 0 30px rgba(0,243,255,0.08), inset 0 0 20px rgba(0,150,255,0.05);
+    pointer-events: none; opacity: 0; transform: translateX(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.env-panel.show { opacity: 1; transform: translateX(0); pointer-events: auto; }
+.env-panel-title {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,243,255,0.15);
+}
+.env-panel-title .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #00f3ff; box-shadow: 0 0 8px #00f3ff;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+.env-panel-title span {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #a5f3fc; text-transform: uppercase;
+}
+.env-item {
+    display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; padding: 8px 10px;
+    border-radius: 10px; background: rgba(0,150,255,0.06); border: 1px solid rgba(0,243,255,0.08); transition: all 0.3s ease;
+}
+.env-item:last-child { margin-bottom: 0; }
+.env-item:hover { background: rgba(0,150,255,0.12); border-color: rgba(0,243,255,0.25); transform: translateX(-4px); }
+.env-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; line-height: 1; }
+.env-label { font-size: 11px; font-weight: 700; color: #00f3ff; letter-spacing: 0.5px; margin-bottom: 2px; }
+.env-desc { font-size: 10.5px; color: #94a3b8; line-height: 1.4; margin: 0; }
+.env-desc strong { color: #e0f2fe; font-weight: 600; }
+
+/* =========================================
+   7. MÀN HÌNH GIỚI THIỆU (INTRO SCREEN)
+   ========================================= */
+#intro-screen {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: url('Intro/intro.png') no-repeat center center; background-size: cover;
+    z-index: 9999; display: flex; flex-direction: column; justify-content: space-between;
+    align-items: center; padding: 8vh 0 5vh 0; box-sizing: border-box;
+    transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), transform 1s ease;
+}
+#intro-screen.hide { opacity: 0; pointer-events: none; transform: scale(1.05); }
+.intro-main-content { display: flex; flex-direction: column; align-items: center; margin-top: 10vh; }
+.intro-logo svg { filter: drop-shadow(0 0 15px rgba(96, 165, 250, 0.6)); margin-bottom: 15px; }
+.intro-title {
+    font-family: 'Exo 2', sans-serif; font-size: 80px; font-weight: 800; color: #ffffff;
+    margin: 0; letter-spacing: 6px; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 180, 255, 0.4); line-height: 1;
+}
+.intro-subtitle {
+    font-size: 20px; color: #e0f2fe; margin: 15px 0 40px 0; font-weight: 400;
+    letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+.intro-btn {
+    background: linear-gradient(90deg, #0284c7 0%, #2563eb 100%);
+    border: 1px solid rgba(125, 211, 252, 0.5); border-radius: 40px; padding: 16px 36px;
+    display: flex; align-items: center; gap: 12px; color: white;
+    font-family: 'Exo 2', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px;
+    cursor: pointer; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.5), inset 0 0 15px rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+.intro-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(2, 132, 199, 0.7), inset 0 0 20px rgba(255,255,255,0.3); border-color: #bae6fd;
+}
+.btn-icon-wrapper {
+    background: white; border-radius: 50%; width: 26px; height: 26px;
+    display: flex; justify-content: center; align-items: center;
+}
+.intro-cards-container { display: flex; gap: 20px; width: 90%; max-width: 1200px; margin-bottom: 2vh; }
+.intro-card {
+    flex: 1; background: rgba(10, 35, 70, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(125, 211, 252, 0.2); border-radius: 16px; padding: 20px 25px;
+    display: flex; align-items: center; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: transform 0.3s ease, background 0.3s ease;
+}
+.intro-card:hover { transform: translateY(-5px); background: rgba(10, 35, 70, 0.7); border-color: rgba(125, 211, 252, 0.4); }
+.icard-icon {
+    width: 50px; height: 50px; border-radius: 50%; background: rgba(14, 165, 233, 0.2);
+    border: 1px solid rgba(14, 165, 233, 0.4); display: flex; justify-content: center; align-items: center;
+    flex-shrink: 0; box-shadow: inset 0 0 15px rgba(14, 165, 233, 0.3);
+}
+.icard-text h3 { color: #ffffff; margin: 0 0 6px 0; font-size: 16px; font-weight: 700; }
+.icard-text p { color: #bae6fd; margin: 0; font-size: 13px; line-height: 1.4; opacity: 0.8; }
+
+/* =========================================
+   8. QUIZ & GAME OVERLAY
+   ========================================= */
+#quiz-overlay,
+#game-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50000;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+#quiz-overlay.show,
+#game-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#quiz-topbar,
+#game-topbar {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    z-index: 10;
+}
+
+#quiz-back-btn,
+#game-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10, 30, 60, 0.85);
+    border: 1px solid rgba(0, 243, 255, 0.4);
+    color: #fff;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 8px 18px 8px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.2);
+    transition: all 0.25s ease;
+}
+#quiz-back-btn:hover,
+#game-back-btn:hover {
+    background: rgba(0, 243, 255, 0.15);
+    border-color: rgba(0, 243, 255, 0.8);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+    transform: translateX(-3px);
+}
+
+#quiz-iframe,
+#game-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    flex: 1;
+}
+    </style>
+</head>
+<body>
+
+<div id="intro-screen">
+    <div class="intro-main-content">
+        <div class="intro-logo">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-4.4 0-8 3.6-8 8 0 1.5.4 3 1.1 4.3.4.8.2 1.8-.3 2.5l-1.5 2 1.8.5c1.2.3 2.4.1 3.4-.6.6-.4 1.4-.4 2 0 .5.3 1 .6 1.5.6s1-.3 1.5-.6c.6-.4 1.4-.4 2 0 .5.3 1 .6 1.5.6s1-.3 1.5-.6c.6-.4 1.4-.4 2 0 .9.6 2.1.9 3.4.6l1.8-.5-1.5-2c-.5-.7-.7-1.7-.3-2.5C21.6 13 22 11.5 22 10c0-4.4-3.6-8-8-8z"/><path d="M9 16v5"/><path d="M15 16v5"/></svg>
+        </div>
+        <h1 class="intro-title">AQUAVERSE</h1>
+        <p class="intro-subtitle">Đại dương kỳ diệu đang chờ bạn khám phá</p>
+        <button id="start-journey-btn" class="intro-btn">
+            BẮT ĐẦU HÀNH TRÌNH 
+            <span class="btn-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+        </button>
+    </div>
+
+    <div class="intro-cards-container">
+        <div class="intro-card">
+            <div class="icard-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-4.4 0-8 3.6-8 8 0 1.5.4 3 1.1 4.3.4.8.2 1.8-.3 2.5l-1.5 2 1.8.5c1.2.3 2.4.1 3.4-.6.6-.4 1.4-.4 2 0 .5.3 1 .6 1.5.6s1-.3 1.5-.6c.6-.4 1.4-.4 2 0 .5.3 1 .6 1.5.6s1-.3 1.5-.6c.6-.4 1.4-.4 2 0 .9.6 2.1.9 3.4.6l1.8-.5-1.5-2c-.5-.7-.7-1.7-.3-2.5C21.6 13 22 11.5 22 10c0-4.4-3.6-8-8-8z"/><path d="M9 16v5"/><path d="M15 16v5"/></svg></div>
+            <div class="icard-text">
+                <h3>Sinh vật đa dạng</h3>
+                <p>Gặp gỡ vô số sinh vật kỳ thú từ khắp đại dương.</p>
+            </div>
+        </div>
+        <div class="intro-card">
+            <div class="icard-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-3 4 6 2-3h4"/><path d="M22 16c-2 0-3-1-5-1s-3 1-5 1-3-1-5-1-3 1-5 1"/></svg></div>
+            <div class="icard-text">
+                <h3>Thế giới sống động</h3>
+                <p>Không gian chân thực, mang đến trải nghiệm sống động như thật.</p>
+            </div>
+        </div>
+        <div class="intro-card">
+            <div class="icard-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15" cy="13" r="1"/><circle cx="18" cy="11" r="1"/></svg></div>
+            <div class="icard-text">
+                <h3>Tương tác thú vị</h3>
+                <p>Tìm hiểu, khám phá và tương tác theo cách của riêng bạn.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ui-layer">
+
+    <div class="brand-logo">
+        <div class="brand-icon">🐋</div>
+        <div class="brand-text">
+            <h1>AquaVerse</h1>
+            <p>Khám phá thế giới thủy cung</p>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <a class="glass-ui nav-btn active"><span class="nav-icon">🏠</span> Trang chủ</a>
+        <a class="glass-ui nav-btn"><span class="nav-icon">ℹ️</span> Thông tin</a>
+        <a class="glass-ui nav-btn"><span class="nav-icon">❓</span> Quizz</a>
+        <a class="glass-ui nav-btn"><span class="nav-icon">🎮</span> Game</a>
+    </nav>
+
+    <div class="env-panel glass-ui">
+        <div class="env-panel-title">
+            <div class="dot"></div>
+            <span>Môi Trường Biển</span>
+        </div>
+        <div class="env-item">
+            <div class="env-icon">🧪</div>
+            <div class="env-text">
+                <div class="env-label">Độ pH (7.8 – 8.4)</div>
+                <p class="env-desc">Môi trường <strong>hơi kiềm ổn định</strong> là điều kiện sống còn để giáp xác và san hô xây dựng khung xương, vỏ đá vôi chắc chắn.</p>
+            </div>
+        </div>
+        <div class="env-item">
+            <div class="env-icon">🌡️</div>
+            <div class="env-text">
+                <div class="env-label">Nhiệt độ (24 – 30°C)</div>
+                <p class="env-desc">Vùng nhiệt độ <strong>lý tưởng</strong> thúc đẩy trao đổi chất mạnh mẽ, tạo nên những rạn san hô rực rỡ và đa dạng nhất hành tinh.</p>
+            </div>
+        </div>
+        <div class="env-item">
+            <div class="env-icon">🌿</div>
+            <div class="env-text">
+                <div class="env-label">Thực Vật</div>
+                <p class="env-desc">Tảo và thực vật phù du — <strong>"lá phổi xanh"</strong> cung cấp hơn một nửa lượng oxy Trái Đất và là nguồn thức ăn sơ cấp.</p>
+            </div>
+        </div>
+        <div class="env-item">
+            <div class="env-icon">🐠</div>
+            <div class="env-text">
+                <div class="env-label">Sinh Vật</div>
+                <p class="env-desc">Cơ chế <strong>thích nghi đặc biệt</strong> như điều tiết muối và các mối quan hệ cộng sinh phức tạp để tồn tại trong môi trường nước mặn.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-ui bottom-bar">
+        <div class="task-main">
+            <div class="task-main-icon">✨</div>
+            <div class="task-main-text">
+                <h3>Nhiệm vụ hôm nay</h3>
+                <p>Hoàn thành để nhận phần thưởng</p>
+            </div>
+        </div>
+        <div class="stats-group">
+            <div class="stat-item">
+                <div class="stat-icon">🐟</div>
+                <div class="stat-info"><p>Khám phá 14 loài</p><span id="discovery-count" style="transition:0.3s">0/14</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon" id="quiz-icon" style="color:#bca5ff;border-color:rgba(188,165,255,0.3); transition: 0.3s;">❓</div>
+                <div class="stat-info"><p>Trả lời quizz</p><span id="quiz-progress" style="color:#bca5ff; transition: 0.3s;">0/1</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon" id="game-icon" style="color:#4ade80;border-color:rgba(74,222,128,0.3); transition: 0.3s;">🎮</div>
+                <div class="stat-info"><p>Chơi Minigame</p><span id="game-progress" style="color:#4ade80; transition: 0.3s;">0/1</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="audio-ui-container" class="glass-ui">
+        <button id="mute-btn" title="Bật/Tắt âm thanh">🔊</button>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" title="Điều chỉnh âm lượng">
+    </div>
+
+</div>
+
+<div id="fish-panel" class="glass-panel">
+    <button id="close-btn">&times;</button>
+    <div class="scanlines"></div>
+
+    <div class="panel-left">
+        <div class="panel-header">
+            <div class="creature-icon-ring">
+                <div class="creature-icon" id="panel-icon">🐟</div>
+            </div>
+            <div class="title-wrapper">
+                <h2>HỒ SƠ SINH VẬT</h2>
+                <h1 id="panel-name">SỨA MẶT TRĂNG</h1>
+                <div id="panel-badge" class="badge">MOON JELLYFISH</div>
+            </div>
+        </div>
+
+        <div class="panel-img-wrapper">
+            <img id="panel-img" class="panel-img" src="" alt="">
+        </div>
+
+        <a id="panel-yt-link" href="#" target="_blank" class="panel-yt-card">
+            <img id="panel-yt-thumb" class="panel-yt-thumb" src="" alt="">
+            <div class="yt-overlay">
+                <div class="yt-header">
+                    <span class="yt-logo"><span style="color:red">▶</span> YouTube</span>
+                </div>
+                <div class="yt-center">
+                    <div class="yt-play-btn">▶</div>
+                </div>
+                <div class="yt-footer">
+                    <span class="yt-title" id="panel-yt-title">Khám phá vẻ đẹp dưới lòng đại dương</span>
+                    <span class="yt-time">4:56</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="panel-right">
+        <div class="panel-right-header">
+            <span class="panel-section-title">THÔNG TIN CHI TIẾT</span>
+            <div class="title-line-dot">
+                <div class="dot"></div>
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="panel-info-list" id="panel-content"></div>
+    </div>
+</div>
+
+<div id="quiz-overlay">
+    <div id="quiz-topbar">
+        <button id="quiz-back-btn">← Quay lại AquaVerse</button>
+    </div>
+    <iframe id="quiz-iframe" src="about:blank" allowfullscreen></iframe>
+</div>
+
+<div id="game-overlay">
+    <div id="game-topbar">
+        <button id="game-back-btn">← Quay lại AquaVerse</button>
+    </div>
+    <iframe id="game-iframe" src="about:blank" allowfullscreen></iframe>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Water.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+<script>
+    // ========== AUDIO ==========
+    const muteBtn     = document.getElementById('mute-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    let previousVolume = parseFloat(volumeSlider.value);
+    let isMuted = false;
+
+    const bgMusic = new Audio('Soundbase.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = parseFloat(volumeSlider.value);
+
+    function startMusic() { bgMusic.play().catch(() => {}); }
+
+    const introScreen = document.getElementById('intro-screen');
+    const startBtn    = document.getElementById('start-journey-btn');
+
+    startBtn.addEventListener('click', () => {
+        startMusic();
+        introScreen.classList.add('hide');
+        renderer.domElement.focus();
+    });
+
+    function updateAudioVolume(v) {
+        bgMusic.volume = v;
+        if (window.oceanSound) window.oceanSound.setVolume(v);
+    }
+
+    muteBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        if (isMuted) {
+            muteBtn.textContent = '🔇';
+            previousVolume = volumeSlider.value;
+            volumeSlider.value = 0;
+        } else {
+            muteBtn.textContent = '🔊';
+            volumeSlider.value = previousVolume > 0 ? previousVolume : 0.5;
+        }
+        bgMusic.muted = isMuted;
+        updateAudioVolume(parseFloat(volumeSlider.value));
+    });
+
+    volumeSlider.addEventListener('input', e => {
+        const v = parseFloat(e.target.value);
+        isMuted = v === 0;
+        muteBtn.textContent = isMuted ? '🔇' : '🔊';
+        bgMusic.muted = isMuted;
+        if (!isMuted) previousVolume = v;
+        updateAudioVolume(v);
+    });
+
+    // ========== NAV ==========
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const envPanel = document.querySelector('.env-panel');
+
+    navBtns.forEach((btn, i) => {
+        btn.addEventListener('click', () => {
+            navBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            envPanel.classList.toggle('show', i === 1);
+
+            // Nút Quizz (index 2)
+            if (i === 2) {
+                const overlay = document.getElementById('quiz-overlay');
+                const iframe  = document.getElementById('quiz-iframe');
+                if (!iframe.src || iframe.src === 'about:blank') {
+                    iframe.src = 'quizz/index.html';
+                }
+                overlay.classList.add('show');
+            }
+
+            // Nút Game (index 3)
+            if (i === 3) {
+                const overlay = document.getElementById('game-overlay');
+                const iframe  = document.getElementById('game-iframe');
+                if (!iframe.src || iframe.src === 'about:blank') {
+                    iframe.src = 'GAME/index.html';
+                }
+                overlay.classList.add('show');
+            }
+        });
+    });
+
+    // ========== DOM READY ==========
+    window.addEventListener('DOMContentLoaded', () => {
+
+        // Nút quay lại từ Quiz
+        document.getElementById('quiz-back-btn').addEventListener('click', () => {
+            document.getElementById('quiz-overlay').classList.remove('show');
+            navBtns.forEach(b => b.classList.remove('active'));
+            navBtns[0].classList.add('active');
+            envPanel.classList.remove('show');
+        });
+
+        // Nút quay lại từ Game
+        document.getElementById('game-back-btn').addEventListener('click', () => {
+            document.getElementById('game-overlay').classList.remove('show');
+            navBtns.forEach(b => b.classList.remove('active'));
+            navBtns[0].classList.add('active');
+            envPanel.classList.remove('show');
+        });
+
+        // Lắng nghe tín hiệu hoàn thành Quiz
+        window.addEventListener('message', (event) => {
+            if (event.data === 'quiz_completed') {
+                const quizProgress = document.getElementById('quiz-progress');
+                const quizIcon     = document.getElementById('quiz-icon');
+                if (quizProgress) {
+                    quizProgress.textContent = '1/1';
+                    quizProgress.style.color = '#4ade80';
+                }
+                if (quizIcon) {
+                    quizIcon.style.color = '#4ade80';
+                    quizIcon.style.borderColor = 'rgba(74,222,128,0.3)';
+                    quizIcon.textContent = '✔️';
+                }
+            }
+
+            // Lắng nghe tín hiệu hoàn thành Game
+            if (event.data === 'game_completed') {
+                const gameProgress = document.getElementById('game-progress');
+                const gameIcon     = document.getElementById('game-icon');
+                if (gameProgress) {
+                    gameProgress.textContent = '1/1';
+                    gameProgress.style.color = '#4ade80';
+                }
+                if (gameIcon) {
+                    gameIcon.style.color = '#4ade80';
+                    gameIcon.style.borderColor = 'rgba(74,222,128,0.3)';
+                    gameIcon.textContent = '✔️';
+                }
+            }
+        });
+    });
+</script>
+
+<script src="main.js"></script>
+</body>
+</html>
