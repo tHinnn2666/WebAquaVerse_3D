@@ -13,9 +13,11 @@
 
 ## 📌 Giới thiệu dự án  
 
-AquaVerse 3D không chỉ là một ứng dụng mô phỏng môi trường đại dương mà còn tích hợp các tính năng học tập, tương tác thông qua hệ thống câu hỏi trắc nghiệm (quiz) và chơi trò chơi(game) giúp người dùng vận dụng ngay tại trang Web. 
+AquaVerse 3D không chỉ là một ứng dụng mô phỏng môi trường đại dương mà còn tích hợp các tính năng học tập, tương tác thông qua hệ thống câu hỏi trắc nghiệm (quiz) và trò chơi (mini-game) giúp người dùng vận dụng ngay tại trang Web. 
 
-Cung cấp thông tin chi tiết, chính xác về các loài sinh vật biển thông qua hệ thống dữ liệu đa phương tiện (Hình ảnh sắc nét, Video thực tế, Âm thanh đại dương).  
+Cung cấp thông tin chi tiết, chính xác về các loài sinh vật biển thông qua hệ thống dữ liệu đa phương tiện (Hình ảnh sắc nét, Video thực tế, Âm thanh đại dương). 
+
+Trang WEB được thiết kế theo luồng Tiếp nhận kiến thức - Học - Vận dụng - Kiểm tra. Ứng dụng mang tính thực tế cao khi có thể áp dụng vào việc giảng dạy các môn Sinh học và Khoa học.
 
 
 ## ✨ Tính năng  
@@ -25,9 +27,9 @@ Cung cấp thông tin chi tiết, chính xác về các loài sinh vật biển 
 - 💡 Hiệu ứng ánh sáng và nước  
 - 🎮 Góc nhìn người thứ nhất (First-person)  
 - 🐳 Thông tin, hình ảnh và video về các loài cá
-- ⚡ Tối ưu hiệu năng với WebGL
 - ❓ Hệ thống câu hỏi tương tác (Quiz)
-- 🎮 Thử thách với game nhận diện loài cá
+- 🎮 Thử thách với mini-game nhận diện loài cá
+- ⚡ Tối ưu hiệu năng với WebGL
 
 
 ## 🎮 Điều khiển  
