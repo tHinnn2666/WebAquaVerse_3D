@@ -28,7 +28,7 @@ Trang WEB được thiết kế theo luồng Tiếp nhận kiến thức - Học
 - 🎮 Góc nhìn người thứ nhất (First-person)  
 - 🐳 Thông tin, hình ảnh và video về các loài cá
 - ❓ Hệ thống câu hỏi tương tác (Quiz)
-- 🎮 Thử thách với mini-game nhận diện loài cá
+- 🎮 Thử thách với Mini-game nhận diện loài cá
 - ⚡ Tối ưu hiệu năng với WebGL
 
 
