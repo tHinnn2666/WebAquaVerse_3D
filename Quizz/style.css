@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Giảm gap tổng thể */
+  overflow-x: hidden;
+  background: #091e38;
+  padding: 20px;
+}
+
+/* BG */
+#bgVideo {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -3;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 30, 56, 0.45);
+  z-index: -2;
+}
+
+/* BUBBLES */
+.bubbles {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bubbles span {
+  position: absolute;
+  bottom: -100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+  animation: rise linear forwards;
+}
+
+@keyframes rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(-120vh) scale(1.6); opacity: 0; }
+}
+
+/* CARD - Đã thu gọn padding */
+.container {
+  width: 100%;
+  max-width: 450px; /* Thu hẹp chiều ngang một chút */
+  padding: 20px 25px; /* Giảm padding từ 30px */
+  border-radius: 28px;
+  background: rgba(21, 30, 52, 0.85);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(85, 174, 194, 0.3);
+  box-shadow: 0 0 60px rgba(95, 194, 201, 0.15);
+  position: relative;
+}
+
+/* TITLE - Giảm size để bớt chiếm chỗ */
+.heading {
+  text-align: center;
+  font-size: 42px; /* Giảm mạnh từ 72px */
+  font-weight: 800;
+  background: linear-gradient(90deg, #e6e8ea, #61bce7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #eff1f4c3;
+  margin-bottom: 5px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* SETTINGS */
+.settings {
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+select {
+  width: 100%;
+  height: 48px; /* Giảm từ 55px */
+  border: none;
+  outline: none;
+  border-radius: 14px;
+  padding: 0 15px;
+  background: rgba(222, 222, 222, 0.08);
+  border: 2px solid rgba(123, 179, 234, 0.2);
+  color: rgb(135, 184, 234);
+  font-size: 16px;
+}
+
+/* BUTTON */
+.btn {
+  width: 100%;
+  height: 55px; /* Giảm từ 65px */
+  border: none;
+  border-radius: 14px;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  transition: .25s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* QUIZ PANEL - Phần bạn muốn chỉnh nhất */
+.hide {
+  display: none;
+}
+
+.timer {
+  margin-bottom: 20px; /* Giảm từ 30px */
+}
+
+.progress {
+  width: 100%;
+  height: 28px; /* Giảm từ 35px */
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .08);
+  position: relative;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #4f46e5);
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.number {
+  color: #9cc7ff;
+  margin-bottom: 12px; /* Giảm từ 20px */
+  font-size: 16px;
+}
+
+.question {
+  color: white;
+  font-size: 20px; /* Giảm từ 26px */
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 20px; /* Giảm từ 30px */
+}
+
+/* ANSWERS - Làm cho mỏng và gọn hơn */
+.answer-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Khoảng cách giữa các câu trả lời hẹp lại */
+}
+
+.answer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 54px; /* Giảm từ 68px */
+  padding: 12px 18px; /* Giảm padding */
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .1);
+  color: white;
+  cursor: pointer;
+  transition: .2s;
+  font-size: 15px;
+}
+
+.answer:hover {
+  transform: translateX(5px);
+  background: rgba(255, 255, 255, .08);
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgba(255, 255, 255, .2);
+  flex-shrink: 0; /* Không cho checkbox bị móp */
+}
+
+.icon {
+  opacity: 0;
+  font-size: 12px;
+}
+
+.answer.correct {
+  background: rgba(0, 255, 136, .1);
+  border-color: #00ff99;
+}
+
+.answer.correct .checkbox {
+  background: #00ff99;
+  border-color: #00ff99;
+}
+
+.answer.correct .icon { opacity: 1; }
+
+.answer.wrong {
+  background: rgba(255, 0, 76, .1);
+  border-color: #ff3b6f;
+}
+
+.answer.wrong .checkbox {
+  background: #ff3b6f;
+  border-color: #ff3b6f;
+}
+
+.answer.wrong .icon { opacity: 1; }
+
+/* SCORE */
+.score {
+  text-align: center;
+  color: #fff;
+}
+
+.final-score {
+  font-size: 40px;
+  font-weight: 800;
+}
+
+/* FEATURES */
+.features {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.feature {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(36, 18, 197, 0.3);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, .1);
+  color: white;
+  box-shadow: 0 0 20px rgba(76, 145, 206, 0.1);
+}
+
+.icon-box {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  background: linear-gradient(135deg, #38bdf8, #4f46e5);
+}
+
+.feature h4 { font-size: 15px; margin-bottom: 2px; }
+.feature p { color: #a8c8ff; font-size: 12px; }
+
+/* MOBILE */
+@media(max-width:700px){
+  .container { padding: 15px; }
+  .heading { font-size: 32px; }
+  .question { font-size: 18px; }
+  .answer { min-height: 48px; font-size: 14px; }
+}

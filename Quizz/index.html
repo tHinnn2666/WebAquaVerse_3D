@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ocean Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <video autoplay muted playsinline id="bgVideo">
+    <source src="image.mp4" type="video/mp4">
+  </video>
+  
+  <div class="bubbles">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="container">
+    <div class="start-screen">
+      <h1 class="heading">Quiz</h1>
+      <p class="subtitle">Test your ocean knowledge and challenge yourself</p>
+      <div class="settings">
+        <label for="numQuestion">🌊Number of Questions</label>
+        <select id="numQuestion">
+          <option value="5">5 Questions</option>
+          <option value="10">10 Questions</option>
+          <option value="15">15 Questions</option>
+          <option value="20">20 Questions</option>
+        </select>
+      </div>
+      <button class="btn start">🚀 START QUIZ</button>
+    </div>
+
+    <div class="quiz hide">
+      <div class="timer">
+        <div class="progress">
+          <div class="progress-bar"></div>
+          <span class="progress-text">15</span>
+        </div>
+      </div>
+
+      <div class="question-wrapper">
+        <div class="number">
+          Question <span class="current">1</span>
+          <span class="total">/10</span>
+        </div>
+        <div class="question">This is a Question</div>
+        <div class="answer-wrapper"></div>
+        <button class="btn submit">Submit</button>
+        <button class="btn next">Next</button>
+      </div>
+    </div>
+
+    <div class="end-screen hide">
+      <h1 class="heading">Finished!</h1>
+      <div class="score">
+        <span class="score-text">Your score</span>
+        <div>
+          <span class="final-score">0</span>
+          <span class="total-score">/10</span>
+        </div>
+      </div>
+      <button class="btn restart">Restart Quiz</button>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <div class="icon-box">🎯</div>
+      <div>
+        <h4>Multiple Choice</h4>
+        <p>Choose the best answer</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="icon-box">⏱</div>
+      <div>
+        <h4>15 Seconds</h4>
+        <p>Fast countdown timer</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="icon-box">🏆</div>
+      <div>
+        <h4>Track Score</h4>
+        <p>See your final result</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="question.js"></script>
+  <script src="quizz.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const endScreen = document.querySelector('.end-screen');
+      
+      if (endScreen) {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+              if (!endScreen.classList.contains('hide')) {
+                // Báo cáo ra ngoài cho AquaVerse
+                window.parent.postMessage('quiz_completed', '*');
+              }
+            }
+          });
+        });
+
+        observer.observe(endScreen, { attributes: true });
+      }
+    });
+  </script>
+</body>
+</html>
