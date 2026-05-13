@@ -40,10 +40,6 @@ Trang WEB được thiết kế theo luồng Tiếp nhận kiến thức - Học
 | Click | Tương tác / Xem thông tin |
 | Space | Thả câu (game) |
 
-## ⚙️ Trải nghiệm:
-
-aquaverse3d.netlify.app
-
 ---
 ### Thành viên nhóm 12:
 - Trịnh Thị Thanh Bình
